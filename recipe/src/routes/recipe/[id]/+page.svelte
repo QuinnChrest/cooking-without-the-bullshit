@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { marked } from 'marked';
 
     /**
    * @type {{ 
@@ -17,7 +18,6 @@
         fetch("http://127.0.0.1:8000/recipes/" + data.recipe_id)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 recipe = data;
             }).catch(error => {
                 console.log(error);
@@ -29,10 +29,16 @@
 
 <main>
     {#if recipe != null}
-
-        <div>{recipe.title}</div>
-        <div>{recipe.author} - {recipe.pub_date}</div>
-        <div>{recipe.source}</div>
-        <div>{recipe.source}</div>
+        <h2 class="mb-0">{recipe.title}</h2>
+        {#if recipe.description }
+            <div class="fw-bold">{recipe.source}</div>
+        {/if}
+        <div class="fw-bold mb-4">
+            {recipe.author} - {new Date(recipe.pub_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+        </div>
+        {#if recipe.description }
+            <div class="mb-4">{recipe.description}</div>
+        {/if}
+        <div>{@html marked(recipe.recipe)}</div>
     {/if}
 </main>
