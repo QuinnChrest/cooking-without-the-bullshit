@@ -4,10 +4,10 @@
 </script>
 
 <div class="container">
-    <div class="row justify-content-md-center">
-        <div class="col-md-6">
+    <div class="row justify-content-center">
+        <div class="col-xl-7 col-xs-12">
             <div class="mb-4">
-                <a class="logo" href="/">COOKING WITHOUT THE BULLSH*T</a>
+                <a class="logo" href="/">🤬COOKING WITHOUT THE BULLSH*T</a>
             </div>
             
             <slot/>

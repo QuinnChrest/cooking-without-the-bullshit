@@ -28,17 +28,19 @@
 </script>
 
 <main>
-    {#if recipe != null}
-        <h2 class="mb-0">{recipe.title}</h2>
-        {#if recipe.description }
-            <div class="fw-bold">{recipe.source}</div>
+    <div class="">
+        {#if recipe != null}
+            <h2 class="mb-0">{recipe.title}</h2>
+            {#if recipe.description }
+                <div class="fw-bold">{recipe.source}</div>
+            {/if}
+            <div class="fw-bold mb-4">
+                {recipe.author} - {new Date(recipe.pub_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+            {#if recipe.description }
+                <div class="mb-4">{recipe.description}</div>
+            {/if}
+            <div>{@html marked(recipe.recipe)}</div>
         {/if}
-        <div class="fw-bold mb-4">
-            {recipe.author} - {new Date(recipe.pub_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-        </div>
-        {#if recipe.description }
-            <div class="mb-4">{recipe.description}</div>
-        {/if}
-        <div>{@html marked(recipe.recipe)}</div>
-    {/if}
+    </div>
 </main>

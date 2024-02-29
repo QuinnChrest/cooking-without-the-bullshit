@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
 
     /**
    * @type {any[]}
@@ -10,9 +11,7 @@
    * @type {{
    *    current: number;
    *    has_next: boolean;
-   *    next: number;
    *    has_previous: boolean;
-   *    previous: number;
    *    count: number;
    * }}
    */
@@ -60,21 +59,71 @@
 </script>
 
 <main>
-    <ul>
-        {#each recipes as recipe}
-            <li><a href="/recipe/{recipe.id}">{recipe.title}</a></li>
+    <div class="mb-4">
+        {#each recipes as recipe, i}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-interactive-supports-focus -->
+            <div class="recipeListItem {recipes.length == i+1 ? 'mb-0' : 'mb-2'} {i % 2 ? '' : 'alt'}" on:click={() => goto("/recipe/" + recipe.id)} aria-label="{recipe.title}" role="button">
+                {recipe.title}
+            </div>
         {/each}
-    </ul>
+    </div>
 
-    <nav>
-        <ul class="pagination justify-content-center">
-            {#if page != null}
-                <li class="page-item {page.has_previous ? '' : 'disabled'}"><a class="page-link">Previous</a></li>
+    {#if page != null && page.count > 1}
+        <nav>
+            <ul class="pagination justify-content-center" style="cursor: pointer;">
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <li class="page-item {page.has_previous ? '' : 'disabled'}"><a class="page-link" on:click={() => {if(page.has_previous){getPage(page.current - 1)}}}>Previous</a></li>
                 {#each Array(page.count) as _, i}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <!-- svelte-ignore a11y-no-static-element-interactions -->
+                    <!-- svelte-ignore a11y-missing-attribute -->
                     <li class="page-item {page.current == i+1 ? 'active' : ''}"><a class="page-link" on:click={() => getPage(i+1)}>{i + 1}</a></li>
                 {/each}
-                <li class="page-item {page.has_next ? '' : 'disabled'}"><a class="page-link">Next</a></li>
-            {/if}
-        </ul>
-    </nav>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <li class="page-item {page.has_next ? '' : 'disabled'}"><a class="page-link" on:click={() => {if(page.has_next){getPage(page.current + 1)}}}>Next</a></li>
+            </ul>
+        </nav>
+    {/if}
 </main>
+
+<style>
+.recipeListItem {
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgba(0,0,0, .07);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.recipeListItem.alt {
+    background-color: rgba(0,0,0, .04);
+}
+
+.recipeListItem:hover {
+    background-color: #d2e7d6a8;
+    border-color: #b8d8be;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.page-link {
+    color: #4F5D66;
+    border-color: #4a6741;
+}
+
+.active>.page-link {
+    background-color: #e8f4ea;
+}
+
+.page-item.disabled .page-link{
+    background-color: rgba(214, 214, 214, 0.5);
+}
+
+.page-item.disabled {
+    cursor: default;
+}
+</style>
