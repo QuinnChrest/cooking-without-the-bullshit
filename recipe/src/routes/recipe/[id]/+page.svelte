@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { marked } from 'marked';
+    import Layout from "../../+layout.svelte";
 
     /**
    * @type {{ 
@@ -27,20 +28,24 @@
     export let data;
 </script>
 
-<main>
-    <div class="">
-        {#if recipe != null}
-            <h2 class="mb-0">{recipe.title}</h2>
-            {#if recipe.description }
-                <div class="fw-bold">{recipe.source}</div>
-            {/if}
-            <div class="fw-bold mb-4">
-                {recipe.author} - {new Date(recipe.pub_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-            </div>
-            {#if recipe.description }
-                <div class="mb-4">{recipe.description}</div>
-            {/if}
-            <div>{@html marked(recipe.recipe)}</div>
+<svelte:head>
+    {#if recipe != null}
+        <title>{recipe.title}</title> 
+    {/if}
+</svelte:head>
+
+{#if recipe != null}
+    <main>
+        <h2 class="mb-0">{recipe.title}</h2>
+        {#if recipe.description }
+            <div class="fw-bold">{recipe.source}</div>
         {/if}
-    </div>
-</main>
+        <div class="fw-bold mb-4">
+            {recipe.author} - {new Date(recipe.pub_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+        </div>
+        {#if recipe.description }
+            <div class="mb-4">{recipe.description}</div>
+        {/if}
+        <div>{@html marked(recipe.recipe)}</div>
+    </main>
+{/if}

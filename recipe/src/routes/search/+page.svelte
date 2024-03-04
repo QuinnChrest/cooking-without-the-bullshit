@@ -29,8 +29,8 @@
     });
 
     /**
-   * @param {number} page
-   */
+     * @param {number} page
+     */
     async function getPage(page){
         fetch("http://127.0.0.1:8000/recipes/?" + new URLSearchParams({ page: page.toString() }))
             .then(response => response.json())
@@ -40,6 +40,27 @@
             }).catch(error => {
                 console.log(error);
             });
+    }
+
+    /**
+     * @type string
+     */
+    let searchValue = "";
+
+    /**
+     * @param {KeyboardEvent & { currentTarget: EventTarget & HTMLInputElement; }} event
+     */
+    async function search(event){
+        if(event.key === "Enter") {
+            fetch("http://127.0.0.1:8000/recipes/search/?" + new URLSearchParams({ search: searchValue }))
+            .then(response => response.json())
+            .then(data => {
+                recipes = data.recipes;
+                updatePage(data.page);
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     }
 
     /**
@@ -58,7 +79,15 @@
     }
 </script>
 
+<svelte:head>
+    <title>No BS Cooking</title> 
+</svelte:head>
+
 <main>
+    <div class="d-flex justify-content-end mb-4">
+        <input type="text" class="form-control searchBar" placeholder="Search" id="Search" bind:value={searchValue} on:keyup={(event) => search(event)}/>
+    </div>
+
     <div class="mb-4">
         {#each recipes as recipe, i}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -66,6 +95,8 @@
             <div class="recipeListItem {recipes.length == i+1 ? 'mb-0' : 'mb-2'} {i % 2 ? '' : 'alt'}" on:click={() => goto("/recipe/" + recipe.id)} aria-label="{recipe.title}" role="button">
                 {recipe.title}
             </div>
+            {:else}
+            No results found.
         {/each}
     </div>
 
@@ -125,5 +156,10 @@
 
 .page-item.disabled {
     cursor: default;
+}
+
+.searchBar {
+    background-color: #f6eee3;
+    width: 250px;
 }
 </style>
