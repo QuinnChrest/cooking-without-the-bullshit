@@ -1,4 +1,5 @@
 <script>
+    import "../app.pcss";
     import 'bootstrap/dist/css/bootstrap.min.css'
     import '@fontsource-variable/source-code-pro';
 </script>
@@ -10,7 +11,7 @@
                 <a class="logo" href="/">🤬 COOKING WITHOUT THE BULLSH*T</a>
             </div>
             
-            <slot/>
+            <slot></slot>
         </div>
     </div>
 </div>

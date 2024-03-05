@@ -1,7 +1,6 @@
 <script>
     import { onMount } from "svelte";
     import { marked } from 'marked';
-    import Layout from "../../+layout.svelte";
 
     /**
    * @type {{ 
