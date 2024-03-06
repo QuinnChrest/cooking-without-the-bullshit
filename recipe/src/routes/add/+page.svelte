@@ -1,14 +1,14 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import { marked } from "marked";
-    import {
-        type DateValue,
-        DateFormatter,
-        getLocalTimeZone
-    } from "@internationalized/date";
-    import { cn } from "$lib/utils";
-    import { Button } from "$lib/components/ui/button";
-    import { Calendar } from "$lib/components/ui/calendar";
-    import * as Popover from "$lib/components/ui/popover";
+    import { onMount } from "svelte";
+
+    onMount(async () => {
+        let token = localStorage.getItem("Auth.Token");
+        if(!token){
+            goto("/login");
+        }
+    });
 
     /**
      * @type {{ 
@@ -27,25 +27,21 @@
         recipe: ""
     };
 
-    let pub_date: DateValue | undefined = undefined;
-
-    const df = new DateFormatter("en-US", {
-        dateStyle: "long"
-    });
-
     async function addRecipe() {
         let body = {
             title: recipe.title,
             author: recipe.author,
             source: recipe.source,
             description: recipe.description,
-            recipe: recipe.recipe,
-            pub_date: pub_date?.toString()
+            recipe: recipe.recipe
         }
 
         const response = await fetch("http://127.0.0.1:8000/recipes/add", {
             method: "POST",
-            credentials: "omit",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Token " + localStorage.getItem("Auth.Token")
+            },
             body: JSON.stringify(body)
         });
     }
@@ -63,36 +59,10 @@
             <input type="text" class="form-control" id="floatingInput" placeholder="Source" bind:value={recipe.source}>
             <label for="floatingInput">Source</label>
         </div>
-        <div class="row">
-            <!-- Author -->
-            <div class="col-md-6">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput" placeholder="Author" bind:value={recipe.author}>
-                    <label for="floatingInput">Author</label>
-                </div>
-            </div>
-            <!-- Publish Date -->
-            <div class="mb-3 col-md-6">
-                <Popover.Root>
-                    <Popover.Trigger asChild let:builder>
-                    <Button
-                        variant="outline"
-                        class={cn(
-                        "w-[240px] justify-start text-left font-normal",
-                        !pub_date && "text-muted-foreground"
-                        )}
-                        style="width: 100%; height: 58px; background-color: #f6eee3"
-                        builders={[builder]}
-                    >
-                        <i class="bi bi-calendar"></i>
-                        {pub_date ? df.format(pub_date.toDate(getLocalTimeZone())) : "Pick a date"}
-                    </Button>
-                    </Popover.Trigger>
-                    <Popover.Content class="w-auto p-0" align="start">
-                    <Calendar bind:value={pub_date} />
-                    </Popover.Content>
-                </Popover.Root>
-            </div>
+        <!-- Author -->
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" placeholder="Author" bind:value={recipe.author}>
+            <label for="floatingInput">Author</label>
         </div>
         <!-- Description -->
         <div class="form-floating mb-3">
@@ -109,9 +79,3 @@
         <pre>{@html marked(recipe.recipe)}</pre>
     </form>
 </main>
-
-<style>
-    input, button, textarea{
-        background-color: #f6eee3;
-    }
-</style>
