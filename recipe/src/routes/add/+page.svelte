@@ -20,14 +20,19 @@
      * }}
      */
     let recipe = {
-        title: "",
-        author: "",
-        source: "",
-        description: "",
-        recipe: ""
+        title: "asdf",
+        author: "asdf",
+        source: "asdf",
+        description: "asdf",
+        recipe: "asdf"
     };
 
     async function addRecipe() {
+        let token = localStorage.getItem("Auth.Token");
+        if(!token) {
+            return
+        }
+
         let body = {
             title: recipe.title,
             author: recipe.author,
@@ -36,14 +41,16 @@
             recipe: recipe.recipe
         }
 
-        const response = await fetch("http://127.0.0.1:8000/recipes/add", {
+        const response = await fetch("/api/recipes/add", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Token " + localStorage.getItem("Auth.Token")
+                "Content-Type" : "application/json",
+                "Authorization": "Token " + token
             },
             body: JSON.stringify(body)
         });
+
+        console.log(response.json());
     }
 </script>
 

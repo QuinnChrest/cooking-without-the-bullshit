@@ -18,7 +18,7 @@
     let page;
 
     onMount(async () => {
-        fetch("http://127.0.0.1:8000/recipes/?" + new URLSearchParams({ page: "1" }))
+        fetch("/api/recipes?" + new URLSearchParams({ page: "1" }))
             .then(response => response.json())
             .then(data => {
                 recipes = data.recipes;
@@ -32,7 +32,7 @@
      * @param {number} page
      */
     async function getPage(page){
-        fetch("http://127.0.0.1:8000/recipes/?" + new URLSearchParams({ page: page.toString() }))
+        fetch("/api/recipes?" + new URLSearchParams({ page: page.toString() }))
             .then(response => response.json())
             .then(data => {
                 recipes = data.recipes;
@@ -52,7 +52,7 @@
      */
     async function search(event){
         if(event.key === "Enter") {
-            fetch("http://127.0.0.1:8000/recipes/search/?" + new URLSearchParams({ search: searchValue }))
+            fetch("/api/recipes/search?" + new URLSearchParams({ search: searchValue }))
             .then(response => response.json())
             .then(data => {
                 recipes = data.recipes;

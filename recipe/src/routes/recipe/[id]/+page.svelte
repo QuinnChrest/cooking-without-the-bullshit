@@ -15,7 +15,7 @@
     let recipe;
 
     onMount(async () => {
-        fetch("http://127.0.0.1:8000/recipes/" + data.recipe_id)
+        fetch("/api/recipes/" + data.recipe_id)
             .then(response => response.json())
             .then(data => {
                 recipe = data;
