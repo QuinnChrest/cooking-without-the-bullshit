@@ -1,21 +1,10 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
 
-    /**
-   * @type {any[]}
-   */
-    let recipes = [];
-
-    /**
-   * @type {{
-   *    current: number;
-   *    has_next: boolean;
-   *    has_previous: boolean;
-   *    count: number;
-   * }}
-   */
-    let page;
+    let recipes: any[] = [];
+    let page: any;
+    let searchValue: string = "";
 
     onMount(async () => {
         fetch("/api/recipes?" + new URLSearchParams({ page: "1" }))
@@ -28,11 +17,8 @@
             });
     });
 
-    /**
-     * @param {number} page
-     */
-    async function getPage(page){
-        fetch("/api/recipes?" + new URLSearchParams({ page: page.toString() }))
+    async function getPage(pageNumber: number){
+        fetch("/api/recipes?" + new URLSearchParams({ page: pageNumber.toString() }))
             .then(response => response.json())
             .then(data => {
                 recipes = data.recipes;
@@ -42,15 +28,7 @@
             });
     }
 
-    /**
-     * @type string
-     */
-    let searchValue = "";
-
-    /**
-     * @param {KeyboardEvent & { currentTarget: EventTarget & HTMLInputElement; }} event
-     */
-    async function search(event){
+    async function search(event: any){
         if(event.key === "Enter") {
             fetch("/api/recipes/search?" + new URLSearchParams({ search: searchValue }))
             .then(response => response.json())
@@ -62,16 +40,8 @@
             });
         }
     }
-
-    /**
-   * @param {{
-   *    current: number;
-   *    has_next: boolean;
-   *    has_previous: boolean;
-   *    count: number;
-   * }} object
-   */
-    function updatePage(object){
+    
+    function updatePage(object: any){
         page.current = object.current
         page.has_next = object.has_next
         page.has_previous = object.has_previous
@@ -85,7 +55,8 @@
 
 <main>
     <div class="d-flex justify-content-end mb-4">
-        <input type="text" class="form-control searchBar" placeholder="Search" id="Search" bind:value={searchValue} on:keyup={(event) => search(event)}/>
+        <button type="button" class="btn btn-primary" on:click={() => {goto("/add")}}><i class="bi bi-plus-lg"></i> Add</button>
+        <input type="text" class="form-control searchBar" style="width: 250px;" placeholder="Search" id="Search" bind:value={searchValue} on:keyup={(event) => search(event)}/>
     </div>
 
     <div class="mb-4">
@@ -156,10 +127,5 @@
 
 .page-item.disabled {
     cursor: default;
-}
-
-.searchBar {
-    background-color: #f6eee3;
-    width: 250px;
 }
 </style>
