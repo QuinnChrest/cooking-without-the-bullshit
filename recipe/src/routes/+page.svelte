@@ -54,17 +54,23 @@
 </svelte:head>
 
 <main>
-    <div class="d-flex justify-content-end mb-4">
-        <button type="button" class="btn btn-primary" on:click={() => {goto("/add")}}><i class="bi bi-plus-lg"></i> Add</button>
+    <div class="d-flex justify-content-between mb-4">
+        <button type="button" class="btn" on:click={() => {goto("/add")}}><i class="bi bi-plus-lg"></i> Add</button>
         <input type="text" class="form-control searchBar" style="width: 250px;" placeholder="Search" id="Search" bind:value={searchValue} on:keyup={(event) => search(event)}/>
     </div>
 
     <div class="mb-4">
+        <div class="row mb-2">
+            <div class="col-6 fw-bold">Name</div>
+            <div class="col-6 text-end fw-bold">Author</div>
+        </div>
+
         {#each recipes as recipe, i}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <div class="recipeListItem {recipes.length == i+1 ? 'mb-0' : 'mb-2'} {i % 2 ? '' : 'alt'}" on:click={() => goto("/recipe/" + recipe.id)} aria-label="{recipe.title}" role="button">
-                {recipe.title}
+            <div class="row recipeListItem {recipes.length == i+1 ? 'mb-0' : 'mb-2'} {i % 2 ? '' : 'alt'}" on:click={() => goto("/recipe/" + recipe.id)} aria-label="{recipe.title}" role="button">
+                <div class="col-6">{recipe.title}</div>
+                <div class="col-6 text-end">{recipe.author}</div>
             </div>
             {:else}
             No results found.
@@ -127,5 +133,9 @@
 
 .page-item.disabled {
     cursor: default;
+}
+
+button {
+    background-color: #e8f4ea;
 }
 </style>

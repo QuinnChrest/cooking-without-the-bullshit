@@ -22,15 +22,19 @@
     onMount( () => {
         token = localStorage.getItem("Auth.Token");
         if(!token){
-            showLogin = true;
+            showLoginModal(true);
         }
     });
 
-    function closeLoginModel(){
-        if(token){
-            showLogin = false;
+    function showLoginModal(show: boolean){
+        if(show){
+            showLogin = true;
         } else {
-            goto("/");
+            if(token){
+                showLogin = false;
+            } else {
+                goto("/");
+            }
         }
     }
 
@@ -45,7 +49,8 @@
           .then(data => {
               localStorage.setItem("Auth.Token", data.token);
               token = data.token;
-              closeLoginModel();
+              showLoginModal(false);
+              resetObject(credentials);
           }).catch(error => {
               console.log(error);
           });
@@ -53,29 +58,30 @@
     
 
     async function addRecipe() {
-        let token = localStorage.getItem("Auth.Token");
         if(!token) {
-            return
+            showLoginModal(true);
+            return;
         }
 
-        let body = {
-            title: recipe.title,
-            author: recipe.author,
-            source: recipe.source,
-            description: recipe.description,
-            recipe: recipe.recipe
-        }
-
-        const response = await fetch("/api/recipes/add", {
+        await fetch("/api/recipes/add", {
             method: "POST",
             headers: {
                 "Content-Type" : "application/json",
                 "Authorization": "Token " + token
             },
-            body: JSON.stringify(body)
-        });
+            body: JSON.stringify(recipe)
+        }).then(response => response.json())
+          .then(success => {
+            resetObject(recipe);
+          }).catch(error => {
+              console.log(error);
+          });
+    }
 
-        console.log(response);
+    function resetObject(object: any) {
+        Object.keys(object).forEach(key => {
+            object[key] = "";
+        });
     }
 </script>
 
@@ -121,7 +127,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Login</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" on:click={closeLoginModel}></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" on:click={() => showLoginModal(false)}></button>
                 </div>
                 <div class="modal-body">
                     <!-- Username -->
@@ -136,7 +142,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" on:click={closeLoginModel}>Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" on:click={() => showLoginModal(false)}>Close</button>
                     <button type="button" class="btn btn-primary" on:click={login}>Login</button>
                 </div>
             </div>
