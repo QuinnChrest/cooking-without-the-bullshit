@@ -136,6 +136,12 @@
 }
 
 button {
-    background-color: #e8f4ea;
+    color: #f6eee3;
+    background-color: #4F5D66;
+}
+
+button:hover {
+    color: #f6eee3;
+    background-color: #6d808b;
 }
 </style>

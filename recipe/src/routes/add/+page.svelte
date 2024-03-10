@@ -4,7 +4,8 @@
     import { onMount } from "svelte";
 
     let token: string | null;
-    let showLogin = false;
+    let showLogin: boolean = false;
+    let showMarkdownPreview: boolean = false;
 
     let credentials = {
         username: "",
@@ -45,15 +46,20 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(credentials)
-        }).then(response => response.json())
-          .then(data => {
-              localStorage.setItem("Auth.Token", data.token);
-              token = data.token;
-              showLoginModal(false);
-              resetObject(credentials);
-          }).catch(error => {
-              console.log(error);
-          });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(!data.token){
+                // show login error
+            } else {
+                localStorage.setItem("Auth.Token", data.token);
+                token = data.token;
+                showLoginModal(false);
+                resetObject(credentials);
+            }
+        }).catch(error => {
+            console.log(error);
+        });
     }
     
 
@@ -115,9 +121,18 @@
         <textarea class="form-control" id="floatingTextarea" placeholder="Recipe" bind:value={recipe.recipe} style="height: 400px;"></textarea>
         <label for="floatingTextarea">Recipe</label>
     </div>
-    <button on:click={addRecipe}>Add Recipe</button>
-    <!-- Markdown Recipe Preview -->
-    <pre>{@html marked(recipe.recipe)}</pre>
+    <div class="mb-3">
+        {#if !showMarkdownPreview}
+            <button class="btn" on:click={() => {showMarkdownPreview = true;}}><i class="bi bi-eye"></i> Markdown Preview</button>
+            {:else}
+            <button class="btn mb-3" on:click={() => {showMarkdownPreview = false;}}><i class="bi bi-eye-slash"></i> Markdown Preview</button>
+            <!-- Markdown Recipe Preview -->
+            <pre>{@html marked(recipe.recipe)}</pre>
+        {/if}
+    </div>
+    <div>
+        <button class="btn" on:click={addRecipe}><i class="bi bi-plus-lg"></i> Add Recipe</button>
+    </div>
 </form>
 
 {#if showLogin}
@@ -154,6 +169,16 @@
 <style>
     .modal {
         display: block;
+    }
+
+    button {
+        color: #f6eee3;
+        background-color: #4F5D66;
+    }
+
+    button:hover {
+        color: #f6eee3;
+        background-color: #6d808b;
     }
 </style>
   
