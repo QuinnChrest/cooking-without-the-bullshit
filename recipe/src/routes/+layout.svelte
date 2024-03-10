@@ -5,7 +5,7 @@
     import swearingEmoji from "$lib/images/swearingEmoji.png";
 </script>
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-xl-7 col-xs-12">
             <div class="mb-4">

@@ -6,6 +6,7 @@
     let token: string | null;
     let showLogin: boolean = false;
     let showMarkdownPreview: boolean = false;
+    let showLoginErrorMessage: boolean = false;
 
     let credentials = {
         username: "",
@@ -40,6 +41,12 @@
     }
 
     async function login(){
+        showLoginErrorMessage = false;
+
+        if(!credentials.username || !credentials.password){
+            return;
+        }
+
         await fetch("/api/recipes/login", {
             method: "POST",
             headers: {
@@ -50,7 +57,7 @@
         .then(response => response.json())
         .then(data => {
             if(!data.token){
-                // show login error
+                showLoginErrorMessage = true;
             } else {
                 localStorage.setItem("Auth.Token", data.token);
                 token = data.token;
@@ -58,7 +65,7 @@
                 resetObject(credentials);
             }
         }).catch(error => {
-            console.log(error);
+            showLoginErrorMessage = true;
         });
     }
     
@@ -86,7 +93,11 @@
 
     function resetObject(object: any) {
         Object.keys(object).forEach(key => {
-            object[key] = "";
+            switch(object[key].type){
+                case 'string':
+                    object[key] = "";
+                    break;
+            }
         });
     }
 </script>
@@ -142,9 +153,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Login</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" on:click={() => showLoginModal(false)}></button>
                 </div>
                 <div class="modal-body">
+                    {#if showLoginErrorMessage}
+                        <div class="alert alert-danger mb-3" role="alert">
+                            <div class="fw-bold fs-5"><i class="bi bi-exclamation-circle-fill"></i> UH OH</div>
+                            <div>Couldn't log you in! Please check your credentials and try again.</div>
+                        </div>
+                    {/if}
                     <!-- Username -->
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput" placeholder="Username" bind:value={credentials.username}/>
@@ -157,7 +173,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" on:click={() => showLoginModal(false)}>Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" on:click={() => showLoginModal(false)}>Cancel</button>
                     <button type="button" class="btn btn-primary" on:click={login}>Login</button>
                 </div>
             </div>

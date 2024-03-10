@@ -68,7 +68,7 @@
         {#each recipes as recipe, i}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <div class="row recipeListItem {recipes.length == i+1 ? 'mb-0' : 'mb-2'} {i % 2 ? '' : 'alt'}" on:click={() => goto("/recipe/" + recipe.id)} aria-label="{recipe.title}" role="button">
+            <div class="row recipeListItem {recipes.length == i+1 ? 'mb-0' : 'mb-2'}" on:click={() => goto("/recipe/" + recipe.id)} aria-label="{recipe.title}" role="button">
                 <div class="col-6">{recipe.title}</div>
                 <div class="col-6 text-end">{recipe.author}</div>
             </div>
@@ -108,23 +108,20 @@
     transition: background-color 0.3s ease-in-out;
 }
 
-.recipeListItem.alt {
-    background-color: rgba(0,0,0, .04);
-}
-
 .recipeListItem:hover {
-    background-color: #d2e7d6a8;
-    border-color: #b8d8be;
+    color: #f6eee3;
+    background-color: #4F5D66;
     transition: background-color 0.3s ease-in-out;
 }
 
 .page-link {
     color: #4F5D66;
-    border-color: #4a6741;
+    border-color: black;
 }
 
 .active>.page-link {
-    background-color: #e8f4ea;
+    color: #f6eee3;
+    background-color: #4F5D66;
 }
 
 .page-item.disabled .page-link{
@@ -143,5 +140,22 @@ button {
 button:hover {
     color: #f6eee3;
     background-color: #6d808b;
+}
+
+input {
+    background-color: #f6eee3;
+    color: #4F5D66;
+    border-color: #4b6474;
+}
+
+input:focus {
+    box-shadow: 0 0 0 4px rgb(122, 140, 168)
+}
+
+nav {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%);
 }
 </style>
